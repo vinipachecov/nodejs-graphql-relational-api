@@ -1,11 +1,19 @@
 import * as http from 'http';
 
 import app from './app';
+import db from './models';
+import { normalizePort, onError, onListening } from './utils/utils';
 
 const server = http.createServer(app);
+const port = normalizePort(process.env.port || 3000);
 
-server.listen(3000);
-server.on('listening', ()=> {
-  console.log('listening on port 3000....');
-});
+// sync of sequelize with mysql
+db.sequelize.sync()
+  .then(() => {
+    server.listen(port);
+    server.on('error', onError(server));
+    server.on('listening', onListening(server));
+  });
+
+
 
