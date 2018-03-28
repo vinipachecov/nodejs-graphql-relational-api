@@ -40,6 +40,12 @@ exports.default = (sequelize, DataTypes) => {
                 const salt = bcryptjs_1.genSaltSync();
                 // mix the user password with the random value generated with saltSync
                 user.password = bcryptjs_1.hashSync(user.password, salt);
+            },
+            beforeUpdate: (user, options) => {
+                if (user.changed(`password`)) {
+                    const salt = bcryptjs_1.genSaltSync();
+                    user.password = bcryptjs_1.hashSync(user.password, salt);
+                }
             }
         }
     });

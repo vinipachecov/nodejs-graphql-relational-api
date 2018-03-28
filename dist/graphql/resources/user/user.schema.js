@@ -8,8 +8,9 @@ const userTypes = `
     name: String!
     email: String!
     photo: String
-    createdt: String!
+    createdAt: String!
     updatedAt: String!
+    posts(first: Int, offset: Int): [ Post! ]!
   }
   
   # Para criar um usuário
