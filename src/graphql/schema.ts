@@ -12,11 +12,18 @@ import { commentResolvers } from './resources/comment/comment.resolvers';
 import { postResolvers } from './resources/post/post.resolvers';
 import { userResolvers } from './resources/user/user.resolvers';
 
+import { tokenResolvers } from './resources/token/token.resolvers';
+
+import { tokenTypes } from './resources/token/token.schema';
+
+
+
 // need to have all the queries we've done (posts, comments, users)
 // Merge all of them based on their common properties of each object (mutations, queries..)    
 const resolvers = merge(
   commentResolvers,
   postResolvers,
+  tokenResolvers,
   userResolvers
 );
 
@@ -34,8 +41,9 @@ export default makeExecutableSchema({
     Query,
     Mutation,
     postTypes,
+    tokenTypes,
     userTypes,
-    commentTypes,
+    commentTypes,    
   ],  
   resolvers
 });
