@@ -52,7 +52,7 @@ export default (Sequelize: Sequelize.Sequelize, DataTypes: Sequelize.DataTypes):
         allowNull: false,
         field: 'author',
         name: 'author'
-      }
+      }            
     });
   };
 

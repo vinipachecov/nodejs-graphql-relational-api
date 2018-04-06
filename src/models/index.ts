@@ -12,7 +12,12 @@ let db = null;
 if (!db) {
   db = {};
 
-  const operatorsAliases = false;
+  const operatorsAliases = {
+    // the in operator will help us
+    // by receiving a list of ids
+    // and search for what has those ids
+    $in: Sequelize.Op.in
+  };
 
   config = Object.assign({ operatorsAliases }, config);
 

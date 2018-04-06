@@ -10,7 +10,12 @@ let db = null;
 //only one instance for the db
 if (!db) {
     db = {};
-    const operatorsAliases = false;
+    const operatorsAliases = {
+        // the in operator will help us
+        // by receiving a list of ids
+        // and search for what has those ids
+        $in: Sequelize.Op.in
+    };
     config = Object.assign({ operatorsAliases }, config);
     //Load the configuration setup by sequelize to connect to MYSQL   
     const sequelize = new Sequelize(config.database, config.username, config.password, config);

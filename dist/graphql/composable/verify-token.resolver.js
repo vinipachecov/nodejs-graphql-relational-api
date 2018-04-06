@@ -6,8 +6,6 @@ exports.verifyTokenResolver = (resolver) => {
     return (parent, args, context, info) => {
         // const token: string = context.authorization ? context.authorization.split(' ')[1] : undefined;
         const token = context.authorization.split(' ')[1];
-        console.log('val do token');
-        console.log(token);
         return jwt.verify(token, utils_1.JWT_SECRET, (err, decoded) => {
             if (!err) {
                 return resolver(parent, args, context, info);

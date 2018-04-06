@@ -1,36 +1,42 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//Utils
 const utils_1 = require("../../../utils/utils");
+//Resolvers
 const composable_resolver_1 = require("../../composable/composable.resolver");
 const auth_resolver_1 = require("../../composable/auth.resolver");
 exports.postResolvers = {
     Post: {
-        author: (post, { id }, { db }, info) => {
-            return db.Post
-                .findById(post.get('author'))
+        author: (post, args, { db, dataloaders: { userLoader } }, info) => {
+            return userLoader
+                .load({ key: post.get('author'), info })
                 .catch(utils_1.handleError);
         },
-        comments: (post, { first = 10, offset = 0 }, { db }, info) => {
-            return db.Comment
+        comments: (post, { first = 10, offset = 0 }, context, info) => {
+            return context.db.Comment
                 .findAll({
                 where: { post: post.get('id') },
                 limit: first,
-                offset: offset
+                offset: offset,
+                attributes: context.requestedFields.getFields(info)
             }).catch(utils_1.handleError);
         },
     },
     Query: {
-        posts: (parent, { first = 10, offset = 0 }, { db }, info) => {
-            return db.Post
+        posts: (parent, { first = 10, offset = 0 }, context, info) => {
+            return context.db.Post
                 .findAll({
                 limit: first,
-                offset: offset
+                offset: offset,
+                attributes: context.requestedFields.getFields(info, { keep: ['id'], exclude: ['comments'] })
             }).catch(utils_1.handleError);
         },
-        post: (parent, { id }, { db }, info) => {
+        post: (parent, { id }, context, info) => {
             id = parseInt(id);
-            return db.Post
-                .findById(id)
+            return context.db.Post
+                .findById(id, {
+                attributes: context.requestedFields.getFields(info, { keep: ['id'], exclude: ['comments'] })
+            })
                 .then((post) => {
                 utils_1.throwError(!post, `POst with id ${id} not found!`);
                 return post;
