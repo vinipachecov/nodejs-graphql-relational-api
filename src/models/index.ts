@@ -27,21 +27,23 @@ if (!db) {
      config.username,
      config.password,
      config
-   );
-
+   );   
    //read the files
    // filter each file but not index.js
    // load a model to it
    fs 
     .readdirSync(__dirname)
     .filter((file: string) => {
-      return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+      const fileSlice: string = file.slice(-3);      
+      return (file.indexOf('.') !== 0) && (file !== basename) && (fileSlice === '.js' || (fileSlice === '.ts'));
     })
     .forEach((file: string) => {
       //load a model to sequelize
       const model = sequelize.import(path.join(__dirname, file));           
       db[model['name']] = model;
     });
+
+    
 
 
     //associate the model with the db

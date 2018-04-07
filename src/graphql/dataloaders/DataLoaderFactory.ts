@@ -8,7 +8,10 @@ import { PostLoader } from './PostLoader';
 import { RequestedFields } from '../ast/RequestedFields';
 import { DataLoaderParam } from '../../interfaces/DataLoaderParamInterface';
 export class DataLoaderFactory {
-  constructor (private db: DbConnection, private requestedFields: RequestedFields) {    
+  constructor (
+    private db: DbConnection, 
+    private requestedFields: RequestedFields) {    
+      
   }
 
   getLoaders(): DataLoaders {

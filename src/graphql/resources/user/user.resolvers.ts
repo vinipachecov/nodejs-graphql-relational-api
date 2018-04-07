@@ -50,8 +50,7 @@ export const userResolvers = {
       }).catch(handleError);
     },
 
-    currentUser: compose(...authResolvers)((parent, args, context: ResolverContext, info: GraphQLResolveInfo) => {      
-      
+    currentUser: compose(...authResolvers)((parent, args, context: ResolverContext, info: GraphQLResolveInfo) => {            
         return context.db.User.findById(context.authUser.id, {
           attributes: context.requestedFields.getFields(info, {keep: ['id'], exclude: ['posts']})
         })
@@ -63,15 +62,14 @@ export const userResolvers = {
   },
 
   Mutation: {
-    createUser: (parent, {input}, {db}: {db:DbConnection}, info: GraphQLResolveInfo) => {
+    createUser: (parent, {input}, {db}: {db:DbConnection}, info: GraphQLResolveInfo) => {      
       return db.sequelize.transaction((t: Transaction) => {
         return db.User
           .create(input, {transaction: t});
       }).catch(handleError);;
     },
     
-    updateUser:  compose(...authResolvers)((parent, {input}, {db, authUser}: {db:DbConnection, authUser: AuthUser}, info: GraphQLResolveInfo) => {
-      
+    updateUser:  compose(...authResolvers)((parent, {input}, {db, authUser}: {db:DbConnection, authUser: AuthUser}, info: GraphQLResolveInfo) => {      
       return db.sequelize.transaction((t: Transaction) => {
         return db.User.findById(authUser.id)
           .then((user: UserInstance) => {
