@@ -53,7 +53,7 @@ exports.postResolvers = {
             }).catch(utils_1.handleError);
         }),
         updatePost: composable_resolver_1.compose(...auth_resolver_1.authResolvers)((parent, { id, input }, { db, authUser }, info) => {
-            //id do post
+            //id do post      
             id = parseInt(id);
             return db.sequelize.transaction((t) => {
                 return db.Post.findById(id)

@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class PostLoader {
     static batchPosts(Post, params, requestedFields) {
-        //catching the array of ids 
         let ids = params.map(param => param.key);
         return Promise.resolve(Post.findAll({
             where: { id: { $in: ids } },

@@ -123,13 +123,10 @@ describe('Post', () => {
               .post('/graphql')
               .set('content-type', 'application/json')
               .send(JSON.stringify(body))
-              .then(res => {
-                console.log(res.body);
-                const singlePost = res.body.data.post;
-                console.log('single post = ',singlePost);
+              .then(res => {                
+                const singlePost = res.body.data.post;                
                 expect(res.body.data).to.have.key('post');
                 expect(singlePost).to.be.an('object');                                
-                console.log(singlePost.title);
                 expect(singlePost.title).to.be.equal('First post');
                 expect(singlePost.author).to.be.an('object').with.keys(['name', 'email']);
                 expect(singlePost.author).to.be.an('object').with.not.keys(['id', 'createdAt', 'updatedAt','posts']);
@@ -160,8 +157,7 @@ describe('Post', () => {
               .post('/graphql')
               .set('content-type', 'application/graphql')
               .send(query)
-              .then(res => {
-                console.log('response ',res.body.data);
+              .then(res => {                
                 const postsList = res.body.data.posts;
                 expect(res.body.data).to.be.an('object');              
                 expect(postsList[0]).to.not.have.keys(['id', 'createdAt', 'updatedAt', 'author', 'comments'])
@@ -194,22 +190,139 @@ describe('Post', () => {
                   offset: 1
                 })
               })
-              .then(res => {
-                console.log('response ',res.body.data);
+              .then(res => {                
                 const postsList = res.body.data.posts;
                 expect(res.body.data).to.be.an('object');              
                 expect(postsList).to.be.an('array').with.length(2);              
                 expect(postsList[0]).to.not.have.keys(['id', 'createdAt', 'updatedAt', 'author', 'comments'])
                 expect(postsList[0]).to.have.keys(['title', 'content', 'photo']);
                 expect(postsList[0].title).to.equal('second post');
-              }).catch(handleError)
-            
-          })
-          
+              }).catch(handleError)            
+          })          
         })
-        
-        
       })
       
     })
+
+    describe('Mutations', () => {
+      describe('application/json', () => {
+
+        describe('createPost', () => {
+          it('Should create a new Post', () => {
+            let body = {
+              query: `
+              mutation createNewPost($input: PostInput!) {
+                createPost(input: $input) {
+                  id
+                  title
+                  content
+                  author {
+                    id
+                    name
+                    email
+                  }
+                }
+              }`,
+              variables: {
+                input: {                  
+                  title: 'Fourth post',
+                  content: 'Fourth content',
+                  photo: 'some_photo'
+                }
+              }
+            };
+  
+            return chai.request(app)
+              .post('/graphql')
+              .set('content-type', 'application/json')
+              .set('authorization', `Bearer ${token}`)
+              .send(JSON.stringify(body))
+              .then(res => {              
+                console.log(res.body);  
+                const createdPost = res.body.data.createPost;
+                expect(createdPost).to.be.an('object');                
+                expect(createdPost).to.have.keys(['id', 'title', 'content','author']);
+                expect(createdPost.title).to.equal('Fourth post');
+                expect(createdPost.content).to.equal('Fourth content');                
+                expect(parseInt(createdPost.author.id)).to.equal(userId);
+
+
+              }).catch(handleError)
+        })
+
+        describe('updatePost', () => {
+          it('Should update an existing Post', () => {
+            const postChanged = {              
+              title: 'Post changed',
+              content: 'first post changed!',
+              photo: 'some_phot_3'
+            }
+            let body = {
+              query: `
+              mutation updateExistingPost($id: ID!, $postInput: PostInput!) {
+                updatePost(id: $id, input: $postInput) {                  
+                  title
+                  content
+                  photo
+                }
+              }`,
+              variables: {
+                id: postId,
+                postInput: postChanged
+              }
+            };            
+  
+            return chai.request(app)
+              .post('/graphql')
+              .set('content-type', 'application/json')
+              .set('authorization', `Bearer ${token}`)
+              .send(JSON.stringify(body))
+              .then(res => {       
+                const updatedPost = res.body.data.updatePost;
+                console.log(updatedPost);
+                expect(updatedPost).to.be.an('object');                
+                expect(updatedPost).to.have.keys(['title', 'content','photo']);
+                expect(updatedPost.title).to.equal(postChanged.title);
+                expect(updatedPost.content).to.equal(postChanged.content);                
+                expect(updatedPost.photo).to.equal(postChanged.photo);
+              }).catch(handleError)
+          })
+        })
+
+        describe('deletePost', () => {
+          it('Should update an existing Post', () => {
+            const postChanged = {              
+              title: 'Post changed',
+              content: 'first post changed!',
+              photo: 'some_phot_3'
+            }
+            let body = {
+              query: `
+              mutation deleteExistingPost($id: ID!) {
+                deletePost(id: $id)
+              }`,
+              variables: {
+               id: postId
+              }
+            };            
+  
+            return chai.request(app)
+              .post('/graphql')
+              .set('content-type', 'application/json')
+              .set('authorization', `Bearer ${token}`)
+              .send(JSON.stringify(body))
+              .then(res => {       
+                expect(res.body.data).to.have.key('deletePost');
+                expect(res.body.data.deletePost).to.be.true;
+              }).catch(handleError)
+          })
+        })
+
+      })
+    })
+  })
+
+
+  //-- Mutations
+    
 });

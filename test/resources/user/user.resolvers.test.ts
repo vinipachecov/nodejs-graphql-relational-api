@@ -231,8 +231,7 @@ describe('User', () => {
             .post('/graphql')
             .set('content-type', 'application/json')
             .send(JSON.stringify(body))
-            .then(res => {
-              console.log(res.body);
+            .then(res => {              
               const createdUser = res.body.data.createUser;
 
               // expect(createdUser).to.be.an('object');
@@ -247,9 +246,7 @@ describe('User', () => {
 
 
       describe('updateUser', () => {
-        it('Should update an existing User', () => {
-          console.log(JWT_SECRET);
-          console.log(token);
+        it('Should update an existing User', () => {          
           let body = {
             query: `
             mutation updateExistingUser($input: UserUpdateInput!) {
@@ -282,9 +279,7 @@ describe('User', () => {
             }).catch(handleError)
         })        
 
-        it('Should block if token is invalid', () => {
-          console.log(JWT_SECRET);
-          console.log(token);
+        it('Should block if token is invalid', () => {          
           let body = {
             query: `
             mutation updateExistingUser($input: UserUpdateInput!) {
@@ -311,18 +306,14 @@ describe('User', () => {
             .then(res => {                    
               expect(res.body.data.updateUser).to.be.null;
               expect(res.body).to.have.keys(['data', 'errors']);
-              expect(res.body.errors).to.be.an('array');
-              console.log(res.body.errors);
-              console.log(res.body.errors.message);
+              expect(res.body.errors).to.be.an('array');              
               expect(res.body.errors[0].message).to.be.equal('JsonWebTokenError: jwt malformed');
             }).catch(handleError)
         })        
       })
 
       describe('updateUserPassword', () => {
-        it('Should update the password of an existing User', () => {
-          console.log(JWT_SECRET);
-          console.log(token);
+        it('Should update the password of an existing User', () => {          
           let body = {
             query: `
             mutation updateUserPassword($input: UserUpdatePassInput!) {
@@ -349,9 +340,7 @@ describe('User', () => {
       })
 
       describe('deleteUser', () => {
-        it('Should delete an existing User', () => {
-          console.log(JWT_SECRET);
-          console.log(token);
+        it('Should delete an existing User', () => {          
           let body = {
             query: `
             mutation{

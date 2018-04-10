@@ -72,7 +72,7 @@ export const postResolvers = {
     }),
 
     updatePost: compose(...authResolvers)((parent, {id,  input}, {db, authUser}: {db: DbConnection, authUser: AuthUser}, info: GraphQLResolveInfo)=> {            
-      //id do post
+      //id do post      
       id = parseInt(id);
       return db.sequelize.transaction((t: Transaction) => {
         return db.Post.findById(id)

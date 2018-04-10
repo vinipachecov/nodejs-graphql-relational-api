@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class UserLoader {
     static batchUsers(User, params, requestedFields) {
-        //catching the array of ids 
         let ids = params.map(param => param.key);
         return Promise.resolve(User.findAll({
             where: { id: { $in: ids } },
