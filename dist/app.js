@@ -2,6 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const graphqlHTTP = require("express-graphql");
+const cors = require("cors");
+const compression = require("compression");
+const helmet = require("helmet");
 const models_1 = require("./models");
 const extract_jwt_middleware_1 = require("./middlewares/extract.jwt.middleware");
 const DataLoaderFactory_1 = require("./graphql/dataloaders/DataLoaderFactory");
@@ -18,6 +21,17 @@ class App {
         this.middleware();
     }
     middleware() {
+        this.express.use(cors({
+            origin: '*',
+            methods: ['GET', 'POST'],
+            allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Encoding'],
+            preflightContinue: false,
+            optionsSuccessStatus: 204
+        }));
+        //compress our requests size...
+        this.express.use(compression());
+        //api security
+        this.express.use(helmet());
         this.express.use('/graphql', extract_jwt_middleware_1.extractJwtMiddleware(), (req, res, next) => {
             req['context']['db'] = models_1.default;
             req['context']['dataloaders'] = this.dataLoaderFactory.getLoaders();

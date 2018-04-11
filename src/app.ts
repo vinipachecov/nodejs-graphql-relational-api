@@ -1,11 +1,17 @@
 import * as express from 'express';
 import * as graphqlHTTP from 'express-graphql';
+import * as cors from 'cors';
+import * as compression from 'compression';
+import * as helmet from 'helmet';
+
 import db from './models';
 import { extractJwtMiddleware } from './middlewares/extract.jwt.middleware';
 import { DataLoaderFactory } from './graphql/dataloaders/DataLoaderFactory';
 import { RequestedFields } from './graphql/ast/RequestedFields';
 
+
 import schema from './graphql/schema';
+import { all } from 'bluebird';
 class App {
   public express: express.Application;
   private dataLoaderFactory: DataLoaderFactory; 
@@ -23,6 +29,20 @@ class App {
   }
  
   private middleware(): void {
+    
+    this.express.use(cors({
+      origin: '*',
+      methods: ['GET', 'POST'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Encoding'],
+      preflightContinue: false,
+      optionsSuccessStatus: 204
+    }));
+
+    //compress our requests size...
+    this.express.use(compression());
+
+    //api security
+    this.express.use(helmet());
     
     this.express.use('/graphql', 
 
