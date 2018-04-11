@@ -9,8 +9,7 @@ export class RequestedFields {
    * @param info 
    * @param options 
    */
-  getFields(info: GraphQLResolveInfo, options?: {keep?: string[], exclude: string[]}): string[] {
-
+  getFields(info: GraphQLResolveInfo, options?: {keep?: string[], exclude?: string[]}): string[] {
     // return an array with the keys of the upper level of the object;
   let fields: string[] = Object.keys(graphqlFields(info));
   if (!options) { return fields; }
@@ -19,6 +18,8 @@ export class RequestedFields {
   fields = (options.keep) ? union<string>(fields, options.keep) : fields;
 
   return (options.exclude) 
-    ? difference<string>(fields, options.exclude) : fields;
+    ? difference<string>(fields, options.exclude) 
+    : fields;
   }
 }
+

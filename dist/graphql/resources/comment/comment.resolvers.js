@@ -24,7 +24,7 @@ exports.commentResolvers = {
                 where: { post: postId },
                 limit: first,
                 offset: offset,
-                attributes: requestedFields.getFields(info)
+                attributes: requestedFields.getFields(info, { keep: undefined })
             })
                 .catch(utils_1.handleError);
         })

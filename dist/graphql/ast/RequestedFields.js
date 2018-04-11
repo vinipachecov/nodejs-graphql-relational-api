@@ -17,7 +17,8 @@ class RequestedFields {
         //join the arrays if the keep attributes has something
         fields = (options.keep) ? lodash_1.union(fields, options.keep) : fields;
         return (options.exclude)
-            ? lodash_1.difference(fields, options.exclude) : fields;
+            ? lodash_1.difference(fields, options.exclude)
+            : fields;
     }
 }
 exports.RequestedFields = RequestedFields;
