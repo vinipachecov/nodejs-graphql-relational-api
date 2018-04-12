@@ -1,6 +1,7 @@
 import { app, db, chai, expect } from '../../test-utils';
 import { handleError, JWT_SECRET } from '../../../src/utils/utils';
 import { UserInstance } from '../../../src/models/UserModel';
+
 import * as jwt from 'jsonwebtoken';
 
 describe('User', () => {
@@ -15,6 +16,7 @@ describe('User', () => {
     /**
      * Watch for the sequence used..
      */
+     
     return db.Comment.destroy({ where: {} })
       .then((rows: number) => db.Post.destroy({ where : {} }))
       .then((rows: number) => db.User.destroy({ where : {} }))

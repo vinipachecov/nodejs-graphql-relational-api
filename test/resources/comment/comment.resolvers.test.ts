@@ -14,6 +14,7 @@ describe('Comment', () => {
     let commentId: number;
 
     beforeEach(() => {
+        
         return db.Comment.destroy({where: {}})
             .then((rows: number) => db.Post.destroy({where: {}}))
             .then((rows: number) => db.User.destroy({where: {}}))
@@ -61,7 +62,7 @@ describe('Comment', () => {
                         post: postId
                     }
                 ]);
-            }).then((comments: CommentInstance[]) => {
+            }).then((comments: CommentInstance[]) => {                
                 commentId = comments[0].get('id');
             });
     });
@@ -134,7 +135,7 @@ describe('Comment', () => {
                             }
                         `,
                         variables: {
-                            input: {
+                            input: {                                
                                 comment: 'Another comment',
                                 post: postId                                
                             }

@@ -21,6 +21,7 @@ if (!db) {
 
   config = Object.assign({ operatorsAliases }, config);
 
+  
   //Load the configuration setup by sequelize to connect to MYSQL   
    const sequelize: Sequelize.Sequelize = new Sequelize(
      config.database,

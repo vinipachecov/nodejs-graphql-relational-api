@@ -15,7 +15,7 @@ pipelines:
 definitions: 
   services: 
     postgres: 
-      image: postgres 
+      image: postgres:10 
       environment: 
         POSTGRES_DB: 'pipelines' 
         POSTGRES_USER: 'test_user'
