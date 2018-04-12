@@ -1,0 +1,22 @@
+clone:
+  depth: full
+
+pipelines:
+  default:
+    - step:
+        image: node:8.6.0
+        caches:
+          - node
+        script:         
+          - npm install
+          - npm test
+        services:
+          - postgres
+definitions: 
+  services: 
+    postgres: 
+      image: postgres 
+      environment: 
+        POSTGRES_DB: 'pipelines' 
+        POSTGRES_USER: 'test_user'
+        POSTGRES_PASSWORD: 'test_user_password'
