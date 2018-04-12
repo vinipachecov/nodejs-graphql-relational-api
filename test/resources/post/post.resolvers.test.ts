@@ -31,8 +31,8 @@ describe('Post', () => {
           }          
         ).then((user: UserInstance) => {  
           return db.User
-            .findAll()
-            .then((users: UserInstance[]) =>{
+            .findOne()
+            .then((user: UserInstance) =>{
               userId = user.get('id');
               const payload = { sub: userId };          
               token = jwt.sign(payload, JWT_SECRET);          
@@ -60,9 +60,9 @@ describe('Post', () => {
     
                 },
               ]).then(() => {
-               return db.Post.findAll()
-                .then((posts: PostInstance[]) => {
-                  postId = posts[0].get('id');                
+               return db.Post.findOne()
+                .then((post: PostInstance) => {
+                  postId = post.get('id');                
               });
             });   
           });   
@@ -127,8 +127,7 @@ describe('Post', () => {
               .post('/graphql')
               .set('content-type', 'application/json')
               .send(JSON.stringify(body))
-              .then(res => {                
-                console.log(res.body);
+              .then(res => {                                
                 const singlePost = res.body.data.post;                
                 expect(res.body.data).to.have.key('post');
                 expect(singlePost).to.be.an('object');                                
@@ -243,7 +242,7 @@ describe('Post', () => {
               .set('authorization', `Bearer ${token}`)
               .send(JSON.stringify(body))
               .then(res => {              
-                console.log(res.body);  
+                
                 const createdPost = res.body.data.createPost;
                 expect(createdPost).to.be.an('object');                
                 expect(createdPost).to.have.keys(['id', 'title', 'content','author']);
@@ -283,8 +282,7 @@ describe('Post', () => {
               .set('authorization', `Bearer ${token}`)
               .send(JSON.stringify(body))
               .then(res => {       
-                const updatedPost = res.body.data.updatePost;
-                console.log(updatedPost);
+                const updatedPost = res.body.data.updatePost;                
                 expect(updatedPost).to.be.an('object');                
                 expect(updatedPost).to.have.keys(['title', 'content','photo']);
                 expect(updatedPost.title).to.equal(postChanged.title);

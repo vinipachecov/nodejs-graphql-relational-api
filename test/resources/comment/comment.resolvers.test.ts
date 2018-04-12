@@ -7,74 +7,65 @@ import { PostInstance } from '../../../src/models/PostModel';
 import { CommentInstance } from '../../../src/models/CommentModel';
 
 describe('Comment', () => {
+  let token: string;
+  let userId: number;
+  let postId: number;
+  let commentId: number;
 
-    let token: string;
-    let userId: number;
-    let postId: number;
-    let commentId: number;
-
-    beforeEach(() => {
-        
-        return db.Comment.destroy({where: {}})
-            .then((rows: number) => db.Post.destroy({where: {}}))
-            .then((rows: number) => db.User.destroy({where: {}}))
-            .then((rows: number) => db.User.create(
-                {                    
-                    name: 'Peter Quill',
-                    email: 'peter@guardians.com',
-                    password: '1234'
+  beforeEach(() => {
+    return db.Comment.destroy({where: {}})
+      .then((rows: number) => db.Post.destroy({where: {}}))
+      .then((rows: number) => db.User.destroy({where: {}}))
+      .then((rows: number) => db.User.create(        
+        {                    
+            name: 'Peter Quill',
+            email: 'peter@guardians.com',
+            password: '1234'
+        }
+        )).then((user: UserInstance) => {
+            return db.User.findOne().then((user: UserInstance) => {
+                userId = user.get('id');
+                const payload = {sub: userId};
+                token = jwt.sign(payload, JWT_SECRET);                  
+            }).then(() => {
+                return db.Post.create(
+                {                      
+                    title: 'First post',
+                    content: 'First post',
+                    author: userId,
+                    photo: "some_photo"
                 }
-            )).then((user: UserInstance) => {
-                return db.User.findAll().then((users: UserInstance[]) => {
-                  userId = users[0].get('id');
-                  const payload = {sub: userId};
-                  token = jwt.sign(payload, JWT_SECRET);                  
-                }).then(() => {
-                  return db.Post.create(
-                    {                      
-                        title: 'First post',
-                        content: 'First post',
-                        author: userId,
-                        photo: "some_photo"
-                    }
-                ).then((post: PostInstance) => {  
-                  
-                  return db.Post.findAll().then((posts) => {
-                    postId = posts[0].get('id');
-                  }).then(() => {
-                    return db.Comment.bulkCreate([
-                      {                        
-                          comment: 'First comment',
-                          user: userId,
-                          post: postId
-                      },
-                      {                        
-                          comment: 'Second comment',
-                          user: userId,
-                          post: postId
-                      },
-                      {                     
-                          comment: 'Third comment',
-                          user: userId,
-                          post: postId
-                      }
-                  ]);
-              }).then((comments: CommentInstance[]) => {                
-                  return db.Comment.findAll().then((comments) => {
-                    commentId = comments[0].get('id');
-                  });
-              });
-
-                  })
-    
-                   
-
-
-                });
+            ).then((post: PostInstance) => {  
                 
-              })
+                return db.Post.findOne().then((post: PostInstance) => {
+                postId = post.get('id');
+                }).then(() => {
+                return db.Comment.bulkCreate([
+                    {                        
+                        comment: 'First comment',
+                        user: userId,
+                        post: postId
+                    },
+                    {                        
+                        comment: 'Second comment',
+                        user: userId,
+                        post: postId
+                    },
+                    {                     
+                        comment: 'Third comment',
+                        user: userId,
+                        post: postId
+                    }
+                ]);
+            }).then((comments: CommentInstance[]) => {                
+                return db.Comment.findOne().then((comment: CommentInstance) => {
+                commentId = comment.get('id');
+                });
             });
-          
+        })
+    });
+        })
+});          
 
     describe('Queries', () => {
 
@@ -106,8 +97,7 @@ describe('Comment', () => {
                   .set('content-type', 'application/json')
                   .send(JSON.stringify(body))
                   .then(res => {                      
-                      const commentsList = res.body.data.commentsByPost;
-                      console.log(res.body);
+                      const commentsList = res.body.data.commentsByPost;                      
                       expect(res.body.data).to.be.an('object');
                       expect(commentsList).to.be.an('array');
                       expect(commentsList[0]).to.not.have.keys(['id', 'createdAt', 'updatedAt'])
@@ -158,8 +148,7 @@ describe('Comment', () => {
                         .send(JSON.stringify(body))
                         .then(res => {                      
                             const createdComment = res.body.data.createComment;
-                            console.log(res.body);
-                            console.log(token);
+                            
                             expect(res.body.data).to.be.an('object');
                             expect(res.body.data).to.have.key('createComment');
                             expect(createdComment).to.be.an('object');
@@ -201,8 +190,7 @@ describe('Comment', () => {
                         .set('authorization', `Bearer ${token}`)
                         .send(JSON.stringify(body))
                         .then(res => {                      
-                            const updateComment = res.body.data.updateComment;
-                            console.log(res.body);
+                            const updateComment = res.body.data.updateComment;                            
                             expect(res.body.data).to.be.an('object');
                             expect(res.body.data).to.have.key('updateComment');
                             expect(updateComment).to.be.an('object');
@@ -235,8 +223,7 @@ describe('Comment', () => {
                         .set('authorization', `Bearer ${token}`)
                         .send(JSON.stringify(body))
                         .then(res => {                      
-                            const deleteComment = res.body.data.deleteComment;
-                            console.log(res.body);
+                            const deleteComment = res.body.data.deleteComment;                            
                             expect(res.body.data).to.be.an('object');
                             expect(res.body.data).to.have.key('deleteComment');
                            expect(deleteComment).to.be.true;

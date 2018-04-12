@@ -20,7 +20,7 @@
     "database": "graphql_blog_test",
     "host": "127.0.0.1",
     "dialect": "postgres",
-    "logging": true
+    "logging": false
   },
   "pipelines": {
     "username": "postgres",
@@ -31,7 +31,7 @@
     "logging": false
   },
   "production": {
-    "username": "vinipachecov",
+    "username": "postgres",
     "password": "klm12x4",
     "database": "database_production",
     "host": "127.0.0.1",

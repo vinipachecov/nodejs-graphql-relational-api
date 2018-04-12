@@ -36,11 +36,11 @@ describe('User', () => {
             email: 'morgan@email.com',
             password: '1234'
           },          
-        ])).then(() => {
+        ])).then(() => {          
           return db.User
-          .findAll()
-            .then((users: UserInstance[]) => {              
-              userId = users[0].get('id');
+          .findOne()
+            .then((user: UserInstance) => {              
+              userId = user.get('id');
               const payload = { sub: userId };          
               token = jwt.sign(payload, JWT_SECRET);          
           });
@@ -71,8 +71,7 @@ describe('User', () => {
             .set('content-type', 'application/json')
             .send(JSON.stringify(body))
             .then(res => {
-              const usersList = res.body.data.users;
-              console.log(usersList);
+              const usersList = res.body.data.users;              
 
               expect(res.body.data).to.be.an('object');              
               expect(usersList[0]).to.not.have.keys(['photo', 'createdAt', 'updatedAt', 'posts'])
@@ -139,7 +138,7 @@ describe('User', () => {
             .set('Content-Type', 'application/json')
             .send(JSON.stringify(body))
             .then(res => {   
-              console.log(res.body);           
+                
               const singleUser = res.body.data.user;          
 
               expect(singleUser).to.be.an('object');
