@@ -56,5 +56,9 @@ typings/
 
 # dotenv environment variables file
 .env
-#config/
+
+#configs
+config/
+coverage/
+nyc_output/
 dist/
