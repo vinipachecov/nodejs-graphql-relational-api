@@ -59,6 +59,6 @@ typings/
 
 #configs
 config/
-coverage/
-nyc_output/
+#coverage/
+#nyc_output/
 dist/
