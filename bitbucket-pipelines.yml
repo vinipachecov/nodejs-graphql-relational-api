@@ -26,4 +26,3 @@ definitions:
         POSTGRES_DB: 'pipelines' 
         POSTGRES_USER: 'test_user'
         POSTGRES_PASSWORD: 'test_user_password'
-ssh://vinipachecov@138.197.10.233/var/repo/graphql-blog-api-git
