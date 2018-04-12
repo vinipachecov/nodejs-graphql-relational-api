@@ -1,0 +1,40 @@
+{
+  "development-postgres": {
+    "username": "postgres",
+    "password": "123456",
+    "database": "graphql_blog_development",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+    },
+  "development": {
+    "username": "root",
+    "password": "cardalbum",
+    "database": "graphql_blog_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "123456",
+    "database": "graphql_blog_test",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "logging": false
+  },
+  "pipelines": {
+    "username": "test_user",
+    "password": "test_user_password",
+    "database": "pipelines",
+    "port": 5432,
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "logging": false
+  },
+  "production": {
+    "username": "vinipachecov",
+    "password": "klm12x4",
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}

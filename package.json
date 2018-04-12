@@ -9,6 +9,7 @@
     "test": "NODE_ENV=test JWT_SECRET=jwt_test mocha",
     "coverage": "nyc --extension .ts --include 'src/**/*.ts' --reporter html npm test",
     "clusters": "NODE_ENV=development port=8080 node dist/clusters",
+    "pipelines": "NODE_ENV=pipelines JWT_SECRET=jwt_pipelines mocha",
     "build": "npm run gulp build",
     "start": "npm run build && npm run clusters"
   },
