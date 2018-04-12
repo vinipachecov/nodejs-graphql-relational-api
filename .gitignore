@@ -58,7 +58,7 @@ typings/
 .env
 
 #configs
-config/
+configproduction.json
 #coverage/
 #nyc_output/
 dist/
