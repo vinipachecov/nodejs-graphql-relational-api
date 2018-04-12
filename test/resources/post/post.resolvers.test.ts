@@ -24,47 +24,51 @@ describe('Post', () => {
       .then((rows: number) => db.Post.destroy({ where : {} }))
       .then((rows: number) => db.User.destroy({ where : {} }))
       .then((rows: number) => db.User.create(
-          {            
-            id: 1,            
+          {                        
             name: 'rocket',
             email: 'rocket@email.com',
             password: '1234'
           }          
-        ).then((user: UserInstance) => {          
-          userId = user.get('id');
-          const payload = { sub: userId };          
-          token = jwt.sign(payload, JWT_SECRET);          
-          return db.Post.bulkCreate([
-            {
-              id: 1,
-              title: 'First post',
-              content: 'a first post!',
-              author: userId,
-              photo: 'first_photo'
-
-            },
-            {
-              id: 2,
-              title: 'second post',
-              content: 'second post man!',
-              author: userId,
-              photo: 'first_photo'
-
-            },
-            {
-              id: 3,
-              title: 'third post',
-              content: 'Our third post!!',
-              author: userId,
-              photo: 'first_photo'
-
-            },
-          ]);
-        }).then((posts: PostInstance[]) => {
-          // console.log(posts);          
-          postId = posts[0].get('id');          
-        }));
-    });
+        ).then((user: UserInstance) => {  
+          return db.User
+            .findAll()
+            .then((users: UserInstance[]) =>{
+              userId = user.get('id');
+              const payload = { sub: userId };          
+              token = jwt.sign(payload, JWT_SECRET);          
+            }).then(() => {
+              return db.Post.bulkCreate([
+                {              
+                  title: 'First post',
+                  content: 'a first post!',
+                  author: userId,
+                  photo: 'first_photo'
+    
+                },
+                {              
+                  title: 'second post',
+                  content: 'second post man!',
+                  author: userId,
+                  photo: 'first_photo'
+    
+                },
+                {              
+                  title: 'third post',
+                  content: 'Our third post!!',
+                  author: userId,
+                  photo: 'first_photo'
+    
+                },
+              ]).then(() => {
+               return db.Post.findAll()
+                .then((posts: PostInstance[]) => {
+                  postId = posts[0].get('id');                
+              });
+            });   
+          });   
+                  
+      }));
+    });  
 
     describe('Queries', () => {
 
@@ -124,6 +128,7 @@ describe('Post', () => {
               .set('content-type', 'application/json')
               .send(JSON.stringify(body))
               .then(res => {                
+                console.log(res.body);
                 const singlePost = res.body.data.post;                
                 expect(res.body.data).to.have.key('post');
                 expect(singlePost).to.be.an('object');                                

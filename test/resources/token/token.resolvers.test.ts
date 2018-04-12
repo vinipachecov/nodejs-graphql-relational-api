@@ -12,8 +12,7 @@ describe('Token', () => {
         .then((rows: number) => db.Post.destroy({where: {}}))
         .then((rows: number) => db.User.destroy({where: {}}))
         .then((rows: number) => db.User.create(
-            {
-                id: 1,
+            {                
                 name: 'Peter Quill',
                 email: 'peter@guardians.com',
                 password: '1234'

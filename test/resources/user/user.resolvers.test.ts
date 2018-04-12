@@ -17,34 +17,35 @@ describe('User', () => {
      * Watch for the sequence used..
      */
      
-    return db.Comment.destroy({ where: {} })
+   return db.Comment.destroy({ where: {} })
       .then((rows: number) => db.Post.destroy({ where : {} }))
       .then((rows: number) => db.User.destroy({ where : {} }))
       .then((rows: number) => db.User.bulkCreate([
-          {            
-            id: 1,            
+          {                                  
             name: 'Default User',
             email: 'defaultuser@email.com',
             password: '1234'
           },
           {
-            id: 2,
             name: 'James',
             email: 'james@email.com',
             password: '1234'
           },
-          {
-            id: 3,
+          {           
             name: 'Morgan',
             email: 'morgan@email.com',
             password: '1234'
           },          
-        ])).then((users: UserInstance[]) => {          
-          userId = users[0].get('id');
-          const payload = { sub: userId };          
-          token = jwt.sign(payload, JWT_SECRET);          
+        ])).then(() => {
+          return db.User
+          .findAll()
+            .then((users: UserInstance[]) => {              
+              userId = users[0].get('id');
+              const payload = { sub: userId };          
+              token = jwt.sign(payload, JWT_SECRET);          
+          });
         });
-
+   
   })
 
   describe('Queries', () => {
@@ -58,6 +59,7 @@ describe('User', () => {
             query: `
             query {
               users {
+                id
                 name
                 email
               }
@@ -70,11 +72,11 @@ describe('User', () => {
             .send(JSON.stringify(body))
             .then(res => {
               const usersList = res.body.data.users;
-              // verify using expect - BDD
+              console.log(usersList);
 
               expect(res.body.data).to.be.an('object');              
-              expect(usersList[0]).to.not.have.keys(['id', 'photo', 'createdAt', 'updatedAt', 'posts'])
-              expect(usersList[0]).to.have.keys(['name', 'email']);
+              expect(usersList[0]).to.not.have.keys(['photo', 'createdAt', 'updatedAt', 'posts'])
+              expect(usersList[0]).to.have.keys(['id','name', 'email']);
             }).catch(handleError)
         });       
 
@@ -112,6 +114,9 @@ describe('User', () => {
 
       describe('user', () => {
         it('Should return a single user', () => {
+          
+         
+
           let body = {
             query: `
             query getSingleUser($id: ID!){
@@ -127,12 +132,14 @@ describe('User', () => {
               id: userId
             }
           };
-
+          
+          
           return chai.request(app)
             .post('/graphql')
             .set('Content-Type', 'application/json')
             .send(JSON.stringify(body))
-            .then(res => {              
+            .then(res => {   
+              console.log(res.body);           
               const singleUser = res.body.data.user;          
 
               expect(singleUser).to.be.an('object');
@@ -192,7 +199,7 @@ describe('User', () => {
               expect(res.body.errors).to.be.an('array');
               
               expect(res.body).to.have.keys(['data', 'errors']);
-              expect(res.body.errors[0].message).to.be.equal('Error: User with id -1 not found');
+              expect(res.body.errors[0].message).to.be.equal('Error: User with id -1 not found!');
             }).catch(handleError)
         });  
         
@@ -264,7 +271,7 @@ describe('User', () => {
             .post('/graphql')
             .set('content-type', 'application/json')
             .send(JSON.stringify(body))
-            .then(res => {              
+            .then(res => {                            
               const createdUser = res.body.data.createUser;
 
               // expect(createdUser).to.be.an('object');

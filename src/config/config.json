@@ -20,11 +20,11 @@
     "database": "graphql_blog_test",
     "host": "127.0.0.1",
     "dialect": "postgres",
-    "logging": false
+    "logging": true
   },
   "pipelines": {
-    "username": "test_user",
-    "password": "test_user_password",
+    "username": "postgres",
+    "password": "123456",
     "database": "pipelines",    
     "host": "127.0.0.1",
     "dialect": "postgres",

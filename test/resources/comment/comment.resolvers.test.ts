@@ -19,53 +19,62 @@ describe('Comment', () => {
             .then((rows: number) => db.Post.destroy({where: {}}))
             .then((rows: number) => db.User.destroy({where: {}}))
             .then((rows: number) => db.User.create(
-                {
-                    id: 1,
+                {                    
                     name: 'Peter Quill',
                     email: 'peter@guardians.com',
                     password: '1234'
                 }
             )).then((user: UserInstance) => {
-                userId = user.get('id');
-                const payload = {sub: userId};
-                token = jwt.sign(payload, JWT_SECRET);
-
-                return db.Post.create(
-                    {
-                        id: 1,
+                return db.User.findAll().then((users: UserInstance[]) => {
+                  userId = users[0].get('id');
+                  const payload = {sub: userId};
+                  token = jwt.sign(payload, JWT_SECRET);                  
+                }).then(() => {
+                  return db.Post.create(
+                    {                      
                         title: 'First post',
                         content: 'First post',
                         author: userId,
                         photo: "some_photo"
                     }
-                );
-            }).then((post: PostInstance) => {
-                postId = post.get('id');
+                ).then((post: PostInstance) => {  
+                  
+                  return db.Post.findAll().then((posts) => {
+                    postId = posts[0].get('id');
+                  }).then(() => {
+                    return db.Comment.bulkCreate([
+                      {                        
+                          comment: 'First comment',
+                          user: userId,
+                          post: postId
+                      },
+                      {                        
+                          comment: 'Second comment',
+                          user: userId,
+                          post: postId
+                      },
+                      {                     
+                          comment: 'Third comment',
+                          user: userId,
+                          post: postId
+                      }
+                  ]);
+              }).then((comments: CommentInstance[]) => {                
+                  return db.Comment.findAll().then((comments) => {
+                    commentId = comments[0].get('id');
+                  });
+              });
 
-                return db.Comment.bulkCreate([
-                    {
-                        id: 1,
-                        comment: 'First comment',
-                        user: userId,
-                        post: postId
-                    },
-                    {
-                        id: 2,
-                        comment: 'Second comment',
-                        user: userId,
-                        post: postId
-                    },
-                    {
-                        id: 3,
-                        comment: 'Third comment',
-                        user: userId,
-                        post: postId
-                    }
-                ]);
-            }).then((comments: CommentInstance[]) => {                
-                commentId = comments[0].get('id');
+                  })
+    
+                   
+
+
+                });
+                
+              })
             });
-    });
+          
 
     describe('Queries', () => {
 
@@ -88,7 +97,7 @@ describe('Comment', () => {
                       }
                   `,
                   variables: {
-                      postId: 1
+                      postId: postId
                   }
               };
 
@@ -137,7 +146,7 @@ describe('Comment', () => {
                         variables: {
                             input: {                                
                                 comment: 'Another comment',
-                                post: postId                                
+                                post: postId                               
                             }
                         }
                     };
@@ -150,6 +159,7 @@ describe('Comment', () => {
                         .then(res => {                      
                             const createdComment = res.body.data.createComment;
                             console.log(res.body);
+                            console.log(token);
                             expect(res.body.data).to.be.an('object');
                             expect(res.body.data).to.have.key('createComment');
                             expect(createdComment).to.be.an('object');
@@ -236,12 +246,7 @@ describe('Comment', () => {
             
 
           
-        })
-        
+        })       
       
     })
-    
-
-  
-
-});
+  });

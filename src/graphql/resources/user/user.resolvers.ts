@@ -39,15 +39,21 @@ export const userResolvers = {
     },
 
     user: (parent, {id},  context: ResolverContext, info: GraphQLResolveInfo) => {
-      id = parseInt(id);
-      return context.db.User.findById(id, {
-        attributes: context.requestedFields.getFields(info, {keep: ['id'], exclude: ['posts']})
-      })
-      .then((user: UserInstance) => {
-        if (!user) throw new Error(`User with id ${id} not found`);        
+      // context.db.User
+      // .findAll({        
+      //   attributes: context.requestedFields.getFields(info, {keep: ['id'], exclude: ['posts']})
+      // }).then((users: UserInstance[]) => {
+      //   console.log(users);
+      // })
+      // .catch(handleError);
 
-        return user;
-      }).catch(handleError);
+      id = parseInt(id);
+            return context.db.User
+                .findById(id)
+                .then((user: UserInstance) => {
+                    throwError(!user, `User with id ${id} not found!`);
+                    return user;
+                }).catch(handleError);
     },
 
     currentUser: compose(...authResolvers)((parent, args, context: ResolverContext, info: GraphQLResolveInfo) => {            
@@ -62,7 +68,7 @@ export const userResolvers = {
   },
 
   Mutation: {
-    createUser: (parent, {input}, {db}: {db:DbConnection}, info: GraphQLResolveInfo) => {      
+    createUser: (parent, {input}, {db}: {db:DbConnection}, info: GraphQLResolveInfo) => {            
       return db.sequelize.transaction((t: Transaction) => {
         return db.User
           .create(input, {transaction: t});
