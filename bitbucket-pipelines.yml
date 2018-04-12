@@ -9,7 +9,7 @@ pipelines:
           - node
         script:         
           - npm install
-          - npm pipelines
+          - npm run pipelines
         services:
           - postgres
 definitions: 
