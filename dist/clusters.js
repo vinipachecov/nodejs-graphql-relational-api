@@ -27,7 +27,7 @@ class Clusters {
             });
         }
         else {
-            console.log(' son ', cluster.worker.process.pid);
+            // console.log(' son ', cluster.worker.process.pid  );
             require('./index');
         }
     }

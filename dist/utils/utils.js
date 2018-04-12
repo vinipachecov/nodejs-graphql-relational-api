@@ -1,13 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.normalizePort = (val) => {
-    let port = (typeof val === 'string') ? parseInt(val) : val;
-    if (isNaN(port))
-        return val;
-    else if (port >= 0)
-        return port;
-    else
-        return false;
+    return (typeof val === 'string') ? parseInt(val) : val;
 };
 exports.onError = (server) => {
     return (error) => {
@@ -32,7 +26,7 @@ exports.onError = (server) => {
 exports.onListening = (server) => {
     return () => {
         let addr = server.address();
-        let bind = (typeof addr === 'string') ? `pipe ${addr}` : `port ${addr.port}`;
+        let bind = (typeof addr === 'string') ? `pipe ${addr}` : `http://${addr.address}:${addr.port}`;
         console.log(`Listening at ${bind}...`);
     };
 };

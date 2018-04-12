@@ -29,13 +29,18 @@ exports.userResolvers = {
                 .catch(utils_1.handleError);
         },
         user: (parent, { id }, context, info) => {
+            // context.db.User
+            // .findAll({        
+            //   attributes: context.requestedFields.getFields(info, {keep: ['id'], exclude: ['posts']})
+            // }).then((users: UserInstance[]) => {
+            //   console.log(users);
+            // })
+            // .catch(handleError);
             id = parseInt(id);
-            return context.db.User.findById(id, {
-                attributes: context.requestedFields.getFields(info, { keep: ['id'], exclude: ['posts'] })
-            })
+            return context.db.User
+                .findById(id)
                 .then((user) => {
-                if (!user)
-                    throw new Error(`User with id ${id} not found`);
+                utils_1.throwError(!user, `User with id ${id} not found!`);
                 return user;
             }).catch(utils_1.handleError);
         },
